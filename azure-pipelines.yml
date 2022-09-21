@@ -47,27 +47,42 @@ stages :
           command: buildAndPush
           repository: '$(DockerImageName)'
 
-  - stage: Deploy
-    displayName: Deploy
+  - stage: DEVELOPMENT-DEPLOY
+    displayName: DEVELOPMENT-DEPLOY
     dependsOn: BUILDandPUSH
     jobs:
     - deployment: Deploy
-      displayName: Deploy job
+      displayName: DEVELOPMENT-DEPLOY
       pool:
         vmImage: 'ubuntu-latest'
-      environment: 'pipeline'
+      environment: 'DEV'
       strategy:
         runOnce:
           deploy:
             steps:
-            # - task: DownloadPipelineArtifact@2
-            #   inputs:
-            #     artifactName: 'drop/deployment.yaml'
-            #     downloadPath: '$(build.artifactstagingdirectory)'
-
             - task: KubernetesManifest@0
-              displayName: deploy
+              displayName: DEVELOPMENT-DEPLOY
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
                 namespace: default
-                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
+                manifests: drop/deployment.yaml
+
+  - stage: PRODUCTION-DEPLOY
+    displayName: PRODUCTION-DEPLOY
+    dependsOn: DEVELOPMENT-DEPLOY
+    jobs:
+    - deployment: Deploy
+      displayName: PRODUCTION-DEPLOY
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: 'PROD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: PRODUCTION-DEPLOY
+              inputs:
+                kubernetesServiceConnection: 'azure-pipelines-cicd-prod'
+                namespace: default
+                manifests: drop/deployment.yaml
