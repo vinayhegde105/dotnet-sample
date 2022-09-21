@@ -73,6 +73,27 @@ stages :
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
+  - stage: TESTING_DEPLOY
+    displayName: TESTING_DEPLOY
+    pool: $(pool)
+    dependsOn: DEVELOPMENT_DEPLOY
+    jobs:
+    - deployment: Deploy
+      displayName: TESTING_DEPLOY
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: 'PROD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: TESTING_DEPLOY
+              inputs:
+                kubernetesServiceConnection: 'k8s-test'
+                namespace: default
+                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
+
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
     pool: $(pool)
