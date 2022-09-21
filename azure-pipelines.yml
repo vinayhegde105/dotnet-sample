@@ -60,14 +60,14 @@ stages :
         runOnce:
           deploy:
             steps:
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifactName: 'manifests'
-                downloadPath: '$(build.artifactstagingdirectory)'
+            # - task: DownloadPipelineArtifact@2
+            #   inputs:
+            #     artifactName: 'deployment.yaml'
+            #     downloadPath: '$(build.artifactstagingdirectory)'
 
             - task: KubernetesManifest@0
               displayName: deploy
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
                 namespace: default
-                manifests: drop/deployment.yaml
+                manifests: $(build.artifactstagingdirectory)/drop/deployment.yaml
