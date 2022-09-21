@@ -55,13 +55,13 @@ stages :
 
   - stage: DEVELOPMENT_DEPLOY
     displayName: DEVELOPMENT_DEPLOY
-    pool: $(pool)
     dependsOn: BUILDandPUSH
     jobs:
     - deployment: Deploy
       displayName: DEVELOPMENT_DEPLOY
-      pool:
-        vmImage: 'ubuntu-latest'
+      pool: $(pool)
+      # pool:
+      #   vmImage: 'ubuntu-latest'
       environment: 'DEV'
       strategy:
         runOnce:
@@ -77,13 +77,13 @@ stages :
 
   - stage: TESTING_DEPLOY
     displayName: TESTING_DEPLOY
-    pool: $(pool)
     dependsOn: DEVELOPMENT_DEPLOY
     jobs:
     - deployment: Deploy
       displayName: TESTING_DEPLOY
-      pool:
-        vmImage: 'ubuntu-latest'
+      pool: $(pool)
+      # pool:
+      #   vmImage: 'ubuntu-latest'
       environment: 'TEST'
       strategy:
         runOnce:
@@ -99,13 +99,13 @@ stages :
 
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
-    pool: $(pool)
     dependsOn: TESTING_DEPLOY
     jobs:
     - deployment: Deploy
       displayName: PRODUCTION_DEPLOY
-      pool:
-        vmImage: 'ubuntu-latest'
+      pool: $(pool)
+      # pool:
+      #   vmImage: 'ubuntu-latest'
       environment: 'PROD'
       strategy:
         runOnce:
