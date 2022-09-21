@@ -11,9 +11,10 @@ trigger:
     exclude:
       - azure-pipelines.yml
 variables:
-  TargetFramework: 'netcoreapp3.1'
-  BuildConfiguration: 'Release'
-  DockerImageName: 'nextgendev/clouddemo'
+- group: pipeline_vars
+  # TargetFramework: 'netcoreapp3.1'
+  # BuildConfiguration: 'Release'
+  # DockerImageName: 'nextgendev/clouddemo'
 stages :
   - stage: BUILDandPUSH
     displayName: BUILDandPUSH
@@ -73,6 +74,7 @@ stages :
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
+
   - stage: TESTING_DEPLOY
     displayName: TESTING_DEPLOY
     pool: $(pool)
@@ -94,10 +96,11 @@ stages :
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
+
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
     pool: $(pool)
-    dependsOn: DEVELOPMENT_DEPLOY
+    dependsOn: TESTING_DEPLOY
     jobs:
     - deployment: Deploy
       displayName: PRODUCTION_DEPLOY
