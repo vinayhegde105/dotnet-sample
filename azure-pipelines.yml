@@ -47,12 +47,12 @@ stages :
           command: buildAndPush
           repository: '$(DockerImageName)'
 
-  - stage: DEVELOPMENT-DEPLOY
-    displayName: DEVELOPMENT-DEPLOY
+  - stage: DEVELOPMENT_DEPLOY
+    displayName: DEVELOPMENT_DEPLOY
     dependsOn: BUILDandPUSH
     jobs:
     - deployment: Deploy
-      displayName: DEVELOPMENT-DEPLOY
+      displayName: DEVELOPMENT_DEPLOY
       pool:
         vmImage: 'ubuntu-latest'
       environment: 'DEV'
@@ -61,18 +61,18 @@ stages :
           deploy:
             steps:
             - task: KubernetesManifest@0
-              displayName: DEVELOPMENT-DEPLOY
+              displayName: DEVELOPMENT_DEPLOY
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
                 namespace: default
                 manifests: drop/deployment.yaml
 
-  - stage: PRODUCTION-DEPLOY
-    displayName: PRODUCTION-DEPLOY
-    dependsOn: DEVELOPMENT-DEPLOY
+  - stage: PRODUCTION_DEPLOY
+    displayName: PRODUCTION_DEPLOY
+    dependsOn: DEVELOPMENT_DEPLOY
     jobs:
     - deployment: Deploy
-      displayName: PRODUCTION-DEPLOY
+      displayName: PRODUCTION_DEPLOY
       pool:
         vmImage: 'ubuntu-latest'
       environment: 'PROD'
@@ -81,7 +81,7 @@ stages :
           deploy:
             steps:
             - task: KubernetesManifest@0
-              displayName: PRODUCTION-DEPLOY
+              displayName: PRODUCTION_DEPLOY
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-prod'
                 namespace: default
