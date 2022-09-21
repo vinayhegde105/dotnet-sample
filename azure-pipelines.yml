@@ -84,7 +84,7 @@ stages :
       displayName: TESTING_DEPLOY
       pool:
         vmImage: 'ubuntu-latest'
-      environment: 'PROD'
+      environment: 'TEST'
       strategy:
         runOnce:
           deploy:
