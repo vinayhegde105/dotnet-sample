@@ -67,22 +67,22 @@ stages :
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
-  # - stage: PRODUCTION_DEPLOY
-  #   displayName: PRODUCTION_DEPLOY
-  #   dependsOn: DEVELOPMENT_DEPLOY
-  #   jobs:
-  #   - deployment: Deploy
-  #     displayName: PRODUCTION_DEPLOY
-  #     pool:
-  #       vmImage: 'ubuntu-latest'
-  #     environment: 'PROD'
-  #     strategy:
-  #       runOnce:
-  #         deploy:
-  #           steps:
-  #           - task: KubernetesManifest@0
-  #             displayName: PRODUCTION_DEPLOY
-  #             inputs:
-  #               kubernetesServiceConnection: 'azure-pipelines-cicd-prod'
-  #               namespace: default
-  #               manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
+  - stage: PRODUCTION_DEPLOY
+    displayName: PRODUCTION_DEPLOY
+    dependsOn: DEVELOPMENT_DEPLOY
+    jobs:
+    - deployment: Deploy
+      displayName: PRODUCTION_DEPLOY
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: 'PROD'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: PRODUCTION_DEPLOY
+              inputs:
+                kubernetesServiceConnection: 'k8s-prod'
+                namespace: default
+                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
