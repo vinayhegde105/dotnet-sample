@@ -1,10 +1,15 @@
 resources:
 - repo: self
   fetchDepth: 1
-pool:
-  vmImage: ubuntu-20.04
+pool: $(pool)
+# pool:
+#   vmImage: ubuntu-20.04
 trigger:
-- main
+  paths:
+    include:
+      - '*'
+    exclude:
+      - azure-pipelines.yml
 variables:
   TargetFramework: 'netcoreapp3.1'
   BuildConfiguration: 'Release'
@@ -49,6 +54,7 @@ stages :
 
   - stage: DEVELOPMENT_DEPLOY
     displayName: DEVELOPMENT_DEPLOY
+    pool: $(pool)
     dependsOn: BUILDandPUSH
     jobs:
     - deployment: Deploy
@@ -69,6 +75,7 @@ stages :
 
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
+    pool: $(pool)
     dependsOn: DEVELOPMENT_DEPLOY
     jobs:
     - deployment: Deploy
