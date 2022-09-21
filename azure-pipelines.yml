@@ -65,7 +65,7 @@ stages :
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
                 namespace: default
-                manifests: drop/deployment.yaml
+                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
@@ -85,4 +85,4 @@ stages :
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-prod'
                 namespace: default
-                manifests: drop/deployment.yaml
+                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
