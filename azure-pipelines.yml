@@ -1,14 +1,20 @@
 resources:
 - repo: self
   fetchDepth: 1
-pool:
-  vmImage: ubuntu-20.04
+pool: $(pool)
+# pool:
+#   vmImage: ubuntu-20.04
 trigger:
-- main
+  paths:
+    include:
+      - '*'
+    exclude:
+      - azure-pipelines.yml
 variables:
-  TargetFramework: 'netcoreapp3.1'
-  BuildConfiguration: 'Release'
-  DockerImageName: 'nextgendev/clouddemo'
+- group: pipeline_vars
+  # TargetFramework: 'netcoreapp3.1'
+  # BuildConfiguration: 'Release'
+  # DockerImageName: 'nextgendev/clouddemo'
 stages :
   - stage: BUILDandPUSH
     displayName: BUILDandPUSH
@@ -39,7 +45,7 @@ stages :
         displayName: 'Login to Container Registry'
         inputs:
           command: login
-          containerRegistry: 'gcr-tutorial'
+          containerRegistry: 'gcr-registry'
       - task: Docker@2
         displayName: 'Build and push image'
         inputs:
@@ -49,6 +55,7 @@ stages :
 
   - stage: DEVELOPMENT_DEPLOY
     displayName: DEVELOPMENT_DEPLOY
+    pool: $(pool)
     dependsOn: BUILDandPUSH
     jobs:
     - deployment: Deploy
@@ -63,13 +70,37 @@ stages :
             - task: KubernetesManifest@0
               displayName: DEVELOPMENT_DEPLOY
               inputs:
-                kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
+                kubernetesServiceConnection: 'k8s-dev'
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
 
+
+  - stage: TESTING_DEPLOY
+    displayName: TESTING_DEPLOY
+    pool: $(pool)
+    dependsOn: DEVELOPMENT_DEPLOY
+    jobs:
+    - deployment: Deploy
+      displayName: TESTING_DEPLOY
+      pool:
+        vmImage: 'ubuntu-latest'
+      environment: 'TEST'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: TESTING_DEPLOY
+              inputs:
+                kubernetesServiceConnection: 'k8s-test'
+                namespace: default
+                manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
+
+
   - stage: PRODUCTION_DEPLOY
     displayName: PRODUCTION_DEPLOY
-    dependsOn: DEVELOPMENT_DEPLOY
+    pool: $(pool)
+    dependsOn: TESTING_DEPLOY
     jobs:
     - deployment: Deploy
       displayName: PRODUCTION_DEPLOY
@@ -83,6 +114,6 @@ stages :
             - task: KubernetesManifest@0
               displayName: PRODUCTION_DEPLOY
               inputs:
-                kubernetesServiceConnection: 'azure-pipelines-cicd-prod'
+                kubernetesServiceConnection: 'k8s-prod'
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
