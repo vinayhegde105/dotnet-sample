@@ -70,4 +70,4 @@ stages :
               inputs:
                 kubernetesServiceConnection: 'azure-pipelines-cicd-dev'
                 namespace: default
-                manifests: manifest/drop/deployment.yaml
+                manifests: drop/deployment.yaml
