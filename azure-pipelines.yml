@@ -1,9 +1,9 @@
 resources:
 - repo: self
   fetchDepth: 1
-pool: $(pool)
-# pool:
-#   vmImage: ubuntu-20.04
+# pool: $(pool)
+pool:
+  vmImage: ubuntu-20.04
 trigger:
   paths:
     include:
@@ -59,9 +59,9 @@ stages :
     jobs:
     - deployment: Deploy
       displayName: DEVELOPMENT_DEPLOY
-      pool: $(pool)
-      # pool:
-      #   vmImage: 'ubuntu-latest'
+#       pool: $(pool)
+      pool:
+        vmImage: 'ubuntu-latest'
       environment: 'DEV'
       strategy:
         runOnce:
@@ -81,9 +81,9 @@ stages :
     jobs:
     - deployment: Deploy
       displayName: TESTING_DEPLOY
-      pool: $(pool)
-      # pool:
-      #   vmImage: 'ubuntu-latest'
+#       pool: $(pool)
+      pool:
+        vmImage: 'ubuntu-latest'
       environment: 'TEST'
       strategy:
         runOnce:
@@ -103,9 +103,9 @@ stages :
     jobs:
     - deployment: Deploy
       displayName: PRODUCTION_DEPLOY
-      pool: $(pool)
-      # pool:
-      #   vmImage: 'ubuntu-latest'
+#       pool: $(pool)
+      pool:
+        vmImage: 'ubuntu-latest'
       environment: 'PROD'
       strategy:
         runOnce:
