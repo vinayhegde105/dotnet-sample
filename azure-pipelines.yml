@@ -114,6 +114,6 @@ stages :
             - task: KubernetesManifest@0
               displayName: PRODUCTION_DEPLOY
               inputs:
-                kubernetesServiceConnection: 'vth-k8s-prod'
+                kubernetesServiceConnection: 'k8s-prod'
                 namespace: default
                 manifests: $(Agent.BuildDirectory)/drop/deployment.yaml
